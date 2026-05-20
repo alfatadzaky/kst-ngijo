@@ -9,9 +9,12 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PublicController;
+use App\Http\Controllers\FacilityController;
 use Illuminate\Support\Facades\Route;
 
-// Public endpoints
+// ==========================================
+// PUBLIC ENDPOINTS (Gak Perlu Login)
+// ==========================================
 Route::prefix('external')->group(function () {
     Route::get('landing-page/info', [PublicController::class, 'getInfo']);
     Route::get('landing-page/stats', [PublicController::class, 'getStatistics']);
@@ -19,12 +22,16 @@ Route::prefix('external')->group(function () {
     Route::get('landing-page/tenants', [PublicController::class, 'getTenantSpotlight']);
     Route::get('landing-page/latest-activities', [PublicController::class, 'getLatestActivities']);
     
-    // Public dashboard routes (read-only for public users)
+    //Public dashboard (public)
     Route::get('dashboard/overview', [DashboardController::class, 'publicOverview']);
     Route::get('dashboard/production', [DashboardController::class, 'publicProduction']);
     Route::get('dashboard/research', [DashboardController::class, 'publicResearch']);
     Route::get('dashboard/sustainability', [DashboardController::class, 'publicSustainability']);
     Route::get('dashboard/executive', [DashboardController::class, 'publicExecutive']);
+
+    //Endpoint Fasilitas buat di Landing Page (Public)
+    Route::get('/facilities', [FacilityController::class, 'index']);
+    Route::get('/facilities/{id}', [FacilityController::class, 'show']);
 });
 
 // Authentication endpoints (public)
@@ -36,27 +43,35 @@ Route::prefix('auth')->group(function () {
     Route::get('me', [AuthController::class, 'me'])->middleware('auth:api');
 });
 
-// Protected API endpoints
+// ==========================================
+// PROTECTED API ENDPOINTS (Wajib Login)
+// ==========================================
 Route::middleware('auth:api')->group(function () {
     Route::prefix('internal')->group(function () {
-        // Production Data routes
+        // Routes data produksi
         Route::get('production-data/my-submissions', [ProductionDataController::class, 'mySubmissions']);
         Route::apiResource('production-data', ProductionDataController::class);
 
-        // Research Data routes
+        // Routes data penelitian
         Route::post('research-data/{id}/outputs', [ResearchDataController::class, 'addOutput']);
         Route::apiResource('research-data', ResearchDataController::class);
 
-        // Sustainability Data routes
+        // Routes data sustainability
         Route::apiResource('sustainability-data', SustainabilityDataController::class);
 
-        // Validation routes (Admin only)
+        // ==========================================
+        // Admin Only (Fasilitas, Validasi, User)
+        // ==========================================
         Route::middleware('role:admin')->group(function () {
+            // CRUD Fasilitas KST Ngijo (Terproteksi & Konsisten pake prefix internal)
+            Route::post('/facilities', [FacilityController::class, 'store']);
+            Route::put('/facilities/{id}', [FacilityController::class, 'update']);
+            Route::delete('/facilities/{id}', [FacilityController::class, 'destroy']);
+
+            // Validasi & User management bawaan
             Route::get('validations/pending', [ValidationController::class, 'pending']);
             Route::patch('validations/{id}/approve', [ValidationController::class, 'approve']);
             Route::patch('validations/{id}/reject', [ValidationController::class, 'reject']);
-            
-            // User management
             Route::apiResource('users', UserController::class);
         });
 
