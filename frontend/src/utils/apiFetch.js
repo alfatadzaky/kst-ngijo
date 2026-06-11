@@ -1,7 +1,7 @@
 // Centralized API fetch dengan auto-logout kalo token expired
 // Semua halaman pake ini, bukan fetch() langsung
 
-export const API_BASE = 'http://localhost/api';
+export const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost/api';
 
 export async function apiFetch(endpoint, options = {}, token = null) {
   const headers = {
