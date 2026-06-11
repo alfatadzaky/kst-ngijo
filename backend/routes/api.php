@@ -56,8 +56,13 @@ Route::middleware('auth:api')->group(function () {
         Route::post('research-data/{id}/outputs', [ResearchDataController::class, 'addOutput']);
         Route::apiResource('research-data', ResearchDataController::class);
 
+        // Chart data endpoint (harus di ATAS apiResource)
+        Route::get('sustainability-data/chart-data', [SustainabilityDataController::class, 'chartData']);
+        Route::apiResource('sustainability-data', SustainabilityDataController::class);
+
         // Routes data sustainability
         Route::apiResource('sustainability-data', SustainabilityDataController::class);
+        
 
         // ==========================================
         // Admin Only (Fasilitas, Validasi, User)
@@ -74,6 +79,12 @@ Route::middleware('auth:api')->group(function () {
             Route::patch('validations/{id}/reject', [ValidationController::class, 'reject']);
             Route::apiResource('users', UserController::class);
         });
+
+        // User directory — accessible semua role (bukan admin-only)
+        Route::get('users/directory', [UserController::class, 'directory']);
+
+        // Researchers directory — accessible semua role (untuk autocomplete)
+        Route::get('researchers', [ResearchDataController::class, 'researchers']);
 
         // Notification routes
         Route::get('notifications', [NotificationController::class, 'index']);

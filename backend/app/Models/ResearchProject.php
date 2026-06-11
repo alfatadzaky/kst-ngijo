@@ -8,7 +8,7 @@ class ResearchProject extends Model
 {
     protected $casts = [
         'start_date' => 'date',
-        'end_date' => 'date',
+        'end_date'   => 'date',
     ];
 
     protected $fillable = [
@@ -17,9 +17,10 @@ class ResearchProject extends Model
         'budget', 'synced_at', 'trl_level'
     ];
 
+    // Sekarang nunjuk ke Researcher, bukan User
     public function principalInvestigator()
     {
-        return $this->belongsTo(User::class, 'principal_investigator_id');
+        return $this->belongsTo(Researcher::class, 'principal_investigator_id');
     }
 
     public function creator()

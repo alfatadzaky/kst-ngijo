@@ -21,9 +21,9 @@ class DatabaseSeeder extends Seeder
 
         // Ini data dummy (cuma jalan di local dev)
         if (app()->environment('local')) {
-            $this->call([
-                SustainabilityDataSeeder::class,
-            ]);
+            // $this->call([
+            //     SustainabilityDataSeeder::class,
+            // ]);
         }
     }
 }

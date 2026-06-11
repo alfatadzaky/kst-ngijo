@@ -107,4 +107,17 @@ class UserController extends Controller
         $roles = Role::all();
         return response()->json(['success' => true, 'data' => $roles]);
     }
+
+    public function directory(Request $request)
+    {
+        $users = User::select('id', 'name')
+            ->where('status', 'active')
+            ->when($request->filled('search'), fn($q) =>
+                $q->where('name', 'like', '%' . $request->search . '%')
+            )
+            ->orderBy('name')
+            ->get();
+
+        return response()->json(['success' => true, 'data' => $users]);
+    }
 }

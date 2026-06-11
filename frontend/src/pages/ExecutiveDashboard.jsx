@@ -81,8 +81,8 @@ export default function ExecutiveDashboard() {
         const json = await res.json();
         if (json.success) setKpis(json.data.kpis);
       } catch (_) {
-        // Kalo gagal, fallback ke angka mock biar UI gak kosong
-        setKpis({ active_projects: 142, active_tenants: 64, total_visitors_ytd: 384 });
+        // Ganti angka mockup ini jadi 0 semua
+        setKpis({ active_projects: 0, active_tenants: 0, total_visitors_ytd: 0, green_score: 0 });
       } finally {
         setLoading(false);
       }
@@ -94,29 +94,29 @@ export default function ExecutiveDashboard() {
   const trendData = trendMode === 'tahun' ? trendDataTahunan : trendDataBulanan;
 
   // Stat cards pake data real dari API, sisanya fallback mock
-  const statsCards = [
+    const statsCards = [
     {
       label: 'Total Proyek Aktif',
-      value: loading ? '...' : String(kpis?.active_projects ?? 142),
-      change: '+12.5%', isUp: true,
+      value: loading ? '...' : String(kpis?.active_projects ?? 0),
+      change: '0%', isUp: true,
       icon: Archive, iconBg: 'bg-emerald-50', iconColor: 'text-emerald-700',
     },
     {
       label: 'Total Paten',
-      value: loading ? '...' : String(kpis?.total_visitors_ytd ?? 384),
-      change: '+8.1%', isUp: true,
+      value: loading ? '...' : String(kpis?.total_visitors_ytd ?? 0),
+      change: '0%', isUp: true,
       icon: BadgeCheck, iconBg: 'bg-amber-50', iconColor: 'text-amber-700',
     },
     {
       label: 'Mitra Industri',
-      value: loading ? '...' : String(kpis?.active_tenants ?? 64),
-      change: '-2.4%', isUp: false,
+      value: loading ? '...' : String(kpis?.active_tenants ?? 0),
+      change: '0%', isUp: true,
       icon: Handshake, iconBg: 'bg-sky-50', iconColor: 'text-sky-700',
     },
     {
       label: 'Green Score',
-      value: '92', suffix: '/100',
-      change: '+4.2%', isUp: true,
+      value: loading ? '...' : String(kpis?.green_score ?? 0), suffix: '/100',
+      change: '0%', isUp: true,
       icon: Leaf, iconBg: 'bg-emerald-700', iconColor: 'text-emerald-50',
     },
   ];
