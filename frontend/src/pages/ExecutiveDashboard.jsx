@@ -9,6 +9,17 @@ import {
   FileText, Award, Wifi, ShieldCheck,
   TrendingUp, TrendingDown, ExternalLink, MapPin, Loader2
 } from 'lucide-react';
+import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
+const KST_COORDS = [-7.9306, 112.6017];
 
 // Chart data tetap mock dulu — backend gak ada endpoint trend tahunan
 const trendDataTahunan = [
@@ -175,9 +186,7 @@ export default function ExecutiveDashboard() {
         <div className="bg-white rounded-xl border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-lg font-bold text-gray-900">Pemanfaatan Fasilitas</h2>
-            <button className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 hover:text-emerald-900 transition-colors">
-              Detail <ExternalLink size={12} />
-            </button>
+            <span className="text-xs text-gray-400">Bulan ini</span>
           </div>
           <div className="space-y-5">
             {fasilitasData.map((item, idx) => (
@@ -194,18 +203,43 @@ export default function ExecutiveDashboard() {
           </div>
         </div>
 
-        {/* Peta */}
+        {/* Peta Kawasan */}
         <div className="bg-white rounded-xl border border-gray-100 p-6">
           <h2 className="text-lg font-bold text-gray-900 mb-4">Peta Kawasan Regional</h2>
-          <div className="relative w-full h-48 bg-gradient-to-br from-emerald-900 via-emerald-800 to-green-900 rounded-xl overflow-hidden mb-4">
-            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-              <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-md text-xs font-semibold text-gray-800 shadow-lg mb-1">KST Ngijo Core Zone</div>
-              <MapPin size={24} className="text-emerald-400 drop-shadow-lg" fill="#34d399" />
-            </div>
+          <div className="w-full h-48 rounded-xl overflow-hidden mb-4 border border-gray-100">
+            <MapContainer
+              center={KST_COORDS}
+              zoom={15}
+              style={{ height: '100%', width: '100%' }}
+              zoomControl={false}
+              scrollWheelZoom={false}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <ZoomControl position="bottomright" />
+              <Marker position={KST_COORDS}>
+                <Popup>
+                  <div className="text-center">
+                    <strong>KST Ngijo Core Zone</strong><br />
+                    <span style={{ fontSize: '11px', color: '#666' }}>Kawasan Sains & Teknologi Ngijo</span>
+                  </div>
+                </Popup>
+              </Marker>
+            </MapContainer>
           </div>
-          <p className="text-sm text-gray-500 mb-3">Area fokus saat ini: Ekspansi wilayah utara untuk inkubasi bioteknologi.</p>
-          <button className="px-5 py-2 bg-emerald-800 text-white text-xs font-semibold rounded-lg hover:bg-emerald-700 transition-colors">PERBESAR</button>
+          <p className="text-sm text-gray-500 mb-3">
+            Area fokus saat ini: Ekspansi wilayah utara untuk inkubasi bioteknologi.
+          </p>
+          <a
+            href={`https://www.openstreetmap.org/?mlat=${KST_COORDS[0]}&mlon=${KST_COORDS[1]}#map=16/${KST_COORDS[0]}/${KST_COORDS[1]}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block px-5 py-2 bg-emerald-800 text-white text-xs font-semibold rounded-lg hover:bg-emerald-700 transition-colors"
+          >
+            PERBESAR
+          </a>
         </div>
       </div>
     </DashboardLayout>

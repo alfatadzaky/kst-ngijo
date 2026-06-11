@@ -1,33 +1,27 @@
 import { useEffect, useState } from 'react'
 import { DashboardLayout } from './DashboardLayout'
-import { useAuth } from '../context/AuthContext'
+import { useApiWithAuth } from '../hooks/useApiWithAuth'
 import MetricCard from '../components/MetricCard'
 import SensorTable from '../components/SensorTable'
 import { Leaf, Wifi, WifiOff } from 'lucide-react'
 
 export default function SustainabilityModule() {
-  const { user } = useAuth()
+  const { fetchWithAuth } = useApiWithAuth()
   const [dashboardData, setDashboardData] = useState(null)
   const [errorLog, setErrorLog] = useState(null)
 
   useEffect(() => {
-    // Nanti ganti pake token dari user.token yang udah disimpen di AuthContext
-    const token = user?.token || ''
-
-    fetch('http://localhost/api/internal/sustainability-data', {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    })
-    .then(res => {
-      if (!res.ok) throw new Error(`Token invalid / Expired (Status: ${res.status})`)
-      return res.json()
-    })
-    .then(data => setDashboardData(data))
-    .catch(err => setErrorLog(err.message))
-  }, [user])
+  const load = async () => {
+    try {
+      const json = await fetchWithAuth('/internal/sustainability-data')
+      if (!json) return // session expired → auto redirect
+      setDashboardData(json)
+    } catch (err) {
+      setErrorLog(err.message)
+    }
+  }
+  load()
+}, [])
 
   const handleNavigate = (key) => {
     console.log('Navigate to:', key)

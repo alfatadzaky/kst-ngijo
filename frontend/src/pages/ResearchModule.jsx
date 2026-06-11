@@ -6,6 +6,7 @@ import {
   MoreVertical, ChevronLeft, ChevronRight,
   TrendingUp, Shield, Users, BarChart3, Loader2, AlertCircle
 } from 'lucide-react';
+import { X, Calendar } from 'lucide-react';
 
 const getCategoryStyle = (category) => {
   const map = {
@@ -123,8 +124,12 @@ export default function ResearchModule() {
             ilmiah interdisipliner di seluruh taman.
           </p>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 bg-emerald-800 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
-          <Plus size={16} /> Project Baru
+        <button
+          onClick={() => setShowModal(true)}
+          className="flex items-center gap-2 px-5 py-2.5 bg-emerald-800 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm"
+        >
+          <Plus size={16} />
+          Project Baru
         </button>
       </div>
 
@@ -260,6 +265,187 @@ export default function ResearchModule() {
           </div>
         </div>
       )}
+
+      {/* ===== MODAL PROJECT BARU ===== */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">Tambah Project Baru</h2>
+                <p className="text-xs text-gray-400 mt-0.5">Data akan disimpan ke database riset</p>
+              </div>
+              <button
+                onClick={() => { setShowModal(false); setModalError(null); }}
+                className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <form onSubmit={handleCreateProject} className="px-6 py-5 space-y-4">
+              {modalError && (
+                <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                  {modalError}
+                </div>
+              )}
+
+              {/* Judul */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                  Judul Proyek <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={modalForm.title}
+                  onChange={(e) => setModalForm(p => ({ ...p, title: e.target.value }))}
+                  placeholder="cth: Pengembangan Bioreaktor Skala Pilot"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                />
+              </div>
+
+              {/* Kategori + TRL */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                    Kategori <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    required
+                    value={modalForm.category}
+                    onChange={(e) => setModalForm(p => ({ ...p, category: e.target.value }))}
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white transition-all"
+                  >
+                    <option value="">Pilih...</option>
+                    <option value="technology">Technology</option>
+                    <option value="agriculture">Agriculture</option>
+                    <option value="energy">Energy</option>
+                    <option value="sustainability">Sustainability</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                    TRL Level (1–9) <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="range"
+                      min={1} max={9}
+                      value={modalForm.trl_level}
+                      onChange={(e) => setModalForm(p => ({ ...p, trl_level: e.target.value }))}
+                      className="flex-1 accent-emerald-600"
+                    />
+                    <span className="text-sm font-bold text-emerald-700 w-6 text-center">
+                      {modalForm.trl_level}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tanggal + Budget */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                    Tanggal Mulai <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={modalForm.start_date}
+                    onChange={(e) => setModalForm(p => ({ ...p, start_date: e.target.value }))}
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Budget (Rp)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={modalForm.budget}
+                    onChange={(e) => setModalForm(p => ({ ...p, budget: e.target.value }))}
+                    placeholder="cth: 50000000"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* Deskripsi */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Deskripsi</label>
+                <textarea
+                  rows={3}
+                  value={modalForm.description}
+                  onChange={(e) => setModalForm(p => ({ ...p, description: e.target.value }))}
+                  placeholder="Ringkasan tujuan dan metode penelitian..."
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none transition-all"
+                />
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => { setShowModal(false); setModalError(null); }}
+                  className="px-5 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={modalLoading}
+                  className="flex items-center gap-2 px-6 py-2.5 bg-emerald-700 text-white rounded-lg text-sm font-semibold hover:bg-emerald-800 transition-colors disabled:opacity-50"
+                >
+                  {modalLoading ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : <Plus size={16} />}
+                  Simpan Project
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }
+
+const [showModal, setShowModal] = useState(false);
+const [modalForm, setModalForm] = useState({
+  title: '',
+  category: '',
+  start_date: new Date().toISOString().split('T')[0],
+  budget: '',
+  description: '',
+  trl_level: 1,
+});
+const [modalLoading, setModalLoading] = useState(false);
+const [modalError, setModalError] = useState(null);
+
+const handleCreateProject = async (e) => {
+  e.preventDefault();
+  setModalLoading(true);
+  setModalError(null);
+  try {
+    const json = await fetchWithAuth('/internal/research-data', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...modalForm,
+        budget: modalForm.budget ? Number(modalForm.budget) : null,
+        trl_level: Number(modalForm.trl_level),
+        principal_investigator_id: 1, // sementara hardcode, nanti bisa dropdown user
+      }),
+    });
+    if (!json) return;
+    setShowModal(false);
+    setModalForm({ title: '', category: '', start_date: new Date().toISOString().split('T')[0], budget: '', description: '', trl_level: 1 });
+    fetchProjects(currentPage, searchQuery); // refresh table
+  } catch (err) {
+    setModalError(err.message);
+  } finally {
+    setModalLoading(false);
+  }
+};

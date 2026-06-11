@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import {
-  Search, Bell, Settings, ChevronDown,
   LayoutDashboard, FlaskConical, Leaf, FileInput, ClipboardList,
-  HelpCircle, User, LogOut, ShieldCheck
+  LogOut, ShieldCheck
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -91,14 +90,6 @@ export function DashboardLayout({ children, activeKey = 'overview', onNavigate }
         {/* Bottom Links */}
         <div className="px-3 pb-6 space-y-0.5">
           <div className="border-t border-gray-100 mb-3"></div>
-          <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-[13px] text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors">
-            <HelpCircle size={18} strokeWidth={1.8} />
-            Bantuan
-          </button>
-          <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-[13px] text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors">
-            <User size={18} strokeWidth={1.8} />
-            Akun
-          </button>
           <button
             onClick={() => { logout(); navigate('/login'); }}
             className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-[13px] text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors"
@@ -125,13 +116,6 @@ export function DashboardLayout({ children, activeKey = 'overview', onNavigate }
 
           {/* Right side */}
           <div className="flex items-center gap-5">
-            <button className="relative text-gray-400 hover:text-white transition-colors">
-              <Bell size={18} />
-              <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
-            </button>
-            <button className="text-gray-400 hover:text-white transition-colors">
-              <Settings size={18} />
-            </button>
 
             <div className="flex items-center gap-3 ml-2">
               <div className="flex flex-col items-end">
